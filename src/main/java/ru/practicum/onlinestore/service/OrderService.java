@@ -63,10 +63,12 @@ public class OrderService {
         itemService.zeroOutItemsCount(items);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderDTO> getAllOrdersWithItems() {
         return orderMapper.toDTO(orderRepository.findAllOrdersWithOrderItems());
     }
 
+    @Transactional(readOnly = true)
     public OrderDTO getOrderWithItems(long id) {
         return orderMapper.toDTO(orderRepository.findOrderWithOrderItems(id));
     }

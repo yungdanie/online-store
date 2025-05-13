@@ -20,6 +20,7 @@ public class ImageService {
         this.imageRepository = imageRepository;
     }
 
+    @Transactional(readOnly = true)
     public byte[] getImage(Long imageId) {
         return imageRepository.getImageBytes(imageId);
     }

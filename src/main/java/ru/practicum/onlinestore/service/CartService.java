@@ -25,6 +25,7 @@ public class CartService {
         this.itemService = itemService;
     }
 
+    @Transactional(readOnly = true)
     public ShoppingCart getShoppingCart() {
         var items = itemService.getItemsWithNonZeroCount();
 

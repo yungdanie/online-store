@@ -43,6 +43,7 @@ public class ItemService {
         items.forEach(item -> itemRepository.zeroOutCount(item.getId()));
     }
 
+    @Transactional(readOnly = true)
     public ItemSearchResponse paginateSearch(ItemSearchRequest itemSearchRequest) {
         checkRequest(itemSearchRequest);
 
@@ -95,15 +96,18 @@ public class ItemService {
         }
     }
 
+    @Transactional(readOnly = true)
     public ItemDTO getById(Long itemId) {
         Objects.requireNonNull(itemId);
         return itemMapper.toDTO(itemRepository.findById(itemId).orElseThrow());
     }
 
+    @Transactional(readOnly = true)
     public List<Item> getItemsByIds(Set<Long> ids) {
         return itemRepository.findAllById(ids);
     }
 
+    @Transactional(readOnly = true)
     public List<ItemDTO> getItemsWithNonZeroCount() {
         return itemRepository.findItemsWithCountGreaterThanZero()
                 .stream()
