@@ -1,46 +1,43 @@
 package ru.practicum.onlinestore.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
-@Entity
 @AllArgsConstructor
 @Getter
 @Setter
 @NoArgsConstructor
+@Table
 public class Item {
 
     @Id
-    @GeneratedValue
-    @Column(nullable = false)
     private Long id;
 
     @NotNull
     @Length(min = 1, max = 100)
-    @Column(length = 100, nullable = false)
     private String title;
 
     @NotNull
     @Length(min = 1, max = 600)
-    @Column(length = 600, nullable = false)
     private String description;
 
     @NotNull
-    @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal price;
 
     @NotNull
-    @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal count;
 
-    @OneToOne
-    @JoinColumn(name = "image_id", referencedColumnName = "id")
-    private Image image;
+    @Length(min = 1, max = 100)
+    private String imageId;
 
     @Override
     public boolean equals(Object o) {

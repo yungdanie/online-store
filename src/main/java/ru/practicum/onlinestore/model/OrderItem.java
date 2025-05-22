@@ -1,11 +1,13 @@
 package ru.practicum.onlinestore.model;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 
@@ -13,22 +15,24 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Table
 public class OrderItem {
 
     @Id
-    @GeneratedValue
     public Long id;
 
     @NotNull
-    @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal count;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
+    @NotNull
+    private Long orderId;
+
+    @NotNull
+    private Long itemId;
+
+    @Transient
     public Order order;
 
-    @ManyToOne
-    @JoinColumn(name = "order_item_id", nullable = false)
+    @Transient
     public Item item;
 }

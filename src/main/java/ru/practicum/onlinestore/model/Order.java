@@ -1,25 +1,25 @@
 package ru.practicum.onlinestore.model;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.List;
 
-@Entity
 @Getter
 @Setter
-@Table(name = "\"order\"")
 @NoArgsConstructor
 @AllArgsConstructor
+@Table
 public class Order {
 
     @Id
-    @GeneratedValue
     private Long id;
 
-    @OneToMany(mappedBy = "order")
+    @Transient
     private List<OrderItem> orderItems;
 }
