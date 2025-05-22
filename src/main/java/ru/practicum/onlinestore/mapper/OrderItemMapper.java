@@ -10,7 +10,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface OrderItemMapper {
 
-    @Mapping(target = "imageId", source = "item.image.id")
     @Mapping(target = "title", source = "item.title")
     @Mapping(target = "price", source = "item.price")
     OrderItemDTO toDTO(OrderItem orderItem);
