@@ -1,17 +1,17 @@
 package ru.practicum.onlinestore.repository;
 
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.practicum.onlinestore.model.Order;
 
-import java.util.List;
+public interface OrderRepository extends ReactiveCrudRepository<Order, Long> {
 
-public interface OrderRepository extends CrudRepository<Order, Long> {
+    @Query("select o.* from \"order\" as o where o.id = :id")
+    Mono<Order> findOrderWithOrderItems(@Param("id") long orderId);
 
-    @Query("from Order o join fetch o.orderItems where o.id = :id")
-    Order findOrderWithOrderItems(@Param("id") long orderId);
-
-    @Query("from Order o join fetch o.orderItems")
-    List<Order> findAllOrdersWithOrderItems();
+    @Query("select o.* from \"order\" as o")
+    Flux<Order> findAllOrdersWithOrderItems();
 }
