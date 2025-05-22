@@ -12,8 +12,7 @@
 ## 🛠 Технологический стек
 
 **Backend:**
-- Spring Data JPA
-- Spring MVC
+- Spring WebFlux
 - Mapstruct
 - Lombok
 
@@ -23,7 +22,7 @@
 
 **Database**
 - PostgreSQL
-- Hibernate
+- r2dbc driver
 
 
 **Тесты**
@@ -41,6 +40,7 @@
 - Java 21
 - PostgreSQL 14+
 - Gradle 8.13+
+- Docker (docker compose tool)
 
 ### Установка
 1. Клонируйте репозиторий:
@@ -64,32 +64,6 @@
 1. Выполните шаги из установки.
 2. Выполните в каталоге с проектом
    ```
-   docker build . -t online-store
+   docker compose up -d
    ```
-3. Запустите postgres в одной сети docker network. 
-   Если вы можете прокинуть порт извне внутрь контейнера, 
-   то указывайте адрес напрямую в property url
-   Создаем сеть:
-   ```
-   docker network create postgres-net
-   ```
-   Создаем контейнер:
-   ```
-   docker run -d --name postgres --network postgres-net
-   -e POSTGRES_USER=test       
-   -e POSTGRES_PASSWORD=test 
-   -e POSTGRES_DB=test        
-   -p 5433:5432
-   postgres:15-alpine
-   ```
-   Если вы можете прокинуть порт извне внутрь контейнера, то указывайте адрес напрямую в property url
-4. Запускаем приложение в той же сети
-   ```
-   docker run -d -p 8080:8080 
-   --network postgres-net 
-   -e "SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/test" 
-   -e "SPRING_DATASOURCE_USERNAME=test" 
-   -e "SPRING_DATASOURCE_PASSWORD=test"  
-   --name online-store-app online-store
-   ```
-5. Готово!
+3. Готово, контейнер с postgresql и приложением поднят на порту 8080.

@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: testing
+    ports:
+      - "5433:5432"
+    networks:
+      - app-net
+
+  app:
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      SPRING_R2DBC_USERNAME: "username"
+      SPRING_R2DBC_PASSWORD: "password"
+      SPRING_R2DBC_URL: "r2dbc:postgresql://postgres:5432/testing"
+    ports:
+      - "8080:8080"
+    networks:
+      - app-net
+
+networks:
+  app-net:
