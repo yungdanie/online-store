@@ -3,6 +3,7 @@ package ru.practicum.onlinestore.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 import ru.practicum.onlinestore.dto.response.OrderDTO;
 import ru.practicum.onlinestore.mapper.OrderMapper;
 import ru.practicum.onlinestore.model.Order;
@@ -11,7 +12,6 @@ import ru.practicum.onlinestore.repository.OrderItemRepository;
 import ru.practicum.onlinestore.repository.OrderRepository;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional
@@ -37,39 +37,43 @@ public class OrderService {
         this.orderItemRepository = orderItemRepository;
     }
 
-    public Long createOrder(Set<Long> itemsToBuy) {
-        Order order = new Order();
-        order = orderRepository.save(order);
-        createOrderItems(order, itemsToBuy);
-        return order.getId();
+    public Mono<Long> createOrder(Mono<List<Long>> itemsToBuy) {
+        var order = Mono.fromCallable(Order::new)
+                .flatMap(orderRepository::save);
+
+        return createOrderItems(order, itemsToBuy)
+                .then(order.map(Order::getId));
     }
 
-    protected void createOrderItems(Order order, Set<Long> itemsToBuy) {
+    protected Mono<Void> createOrderItems(Mono<Order> monoOrder, Mono<List<Long>> itemsToBuy) {
         var items = itemService.getItemsByIds(itemsToBuy);
 
-        var orderItems = items.stream()
-                .map(item -> {
+        var orderItems = monoOrder.flatMapMany(order ->
+                items.map(item -> {
                     var orderItem = new OrderItem();
 
                     orderItem.setItem(item);
-                    orderItem.setOrder(order);
                     orderItem.setCount(item.getCount());
 
                     return orderItem;
                 })
-                .toList();
+        );
 
-        orderItemRepository.saveAll(orderItems);
-        itemService.zeroOutItemsCount(items);
+        return orderItemRepository.saveAll(orderItems)
+                .then(itemService.zeroOutItemsCount(itemsToBuy));
     }
 
     @Transactional(readOnly = true)
-    public List<OrderDTO> getAllOrdersWithItems() {
-        return orderMapper.toDTO(orderRepository.findAllOrdersWithOrderItems());
+    public Mono<List<OrderDTO>> getAllOrdersWithItems() {
+        return orderRepository.findAllOrdersWithOrderItems()
+                .map(orderMapper::toDTO)
+                .collectList();
     }
 
     @Transactional(readOnly = true)
-    public OrderDTO getOrderWithItems(long id) {
-        return orderMapper.toDTO(orderRepository.findOrderWithOrderItems(id));
+    public Mono<OrderDTO> getOrderWithItems(long id) {
+        return orderRepository
+                .findOrderWithOrderItems(id)
+                .map(orderMapper::toDTO);
     }
 }

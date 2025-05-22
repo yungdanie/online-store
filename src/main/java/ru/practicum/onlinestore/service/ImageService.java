@@ -1,39 +1,25 @@
 package ru.practicum.onlinestore.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import ru.practicum.onlinestore.model.Image;
-import ru.practicum.onlinestore.repository.ImageRepository;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 
 @Service
-@Transactional
 public class ImageService {
 
-    private final ImageRepository imageRepository;
+    public Mono<byte[]> getImage(String imageId) throws IOException {
+        Resource resource =  new ClassPathResource("static/files/" + imageId);
 
-    @Autowired
-    public ImageService(ImageRepository imageRepository) {
-        this.imageRepository = imageRepository;
-    }
-
-    @Transactional(readOnly = true)
-    public byte[] getImage(Long imageId) {
-        return imageRepository.getImageBytes(imageId);
-    }
-
-    public void upload(MultipartFile file) {
-        var image = new Image();
-
-        try {
-            image.setData(file.getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (resource.exists()) {
+            return Mono.just(resource.getContentAsByteArray()).subscribeOn(Schedulers.boundedElastic());
+        } else {
+            throw new MalformedURLException("Image not found: " + imageId);
         }
-
-        imageRepository.save(image);
     }
+
 }

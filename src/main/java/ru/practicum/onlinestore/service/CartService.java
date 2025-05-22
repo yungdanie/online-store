@@ -3,13 +3,13 @@ package ru.practicum.onlinestore.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.onlinestore.dto.BuyItem;
+import reactor.core.publisher.Mono;
 import ru.practicum.onlinestore.dto.request.ChangeCountAction;
 import ru.practicum.onlinestore.dto.response.ItemDTO;
 import ru.practicum.onlinestore.dto.response.ShoppingCart;
 
 import java.math.BigDecimal;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -26,31 +26,37 @@ public class CartService {
     }
 
     @Transactional(readOnly = true)
-    public ShoppingCart getShoppingCart() {
-        var items = itemService.getItemsWithNonZeroCount();
+    public Mono<ShoppingCart> getShoppingCart() {
+        return itemService.getItemsWithNonZeroCount()
+                .collectList()
+                .map(items ->
+                        new ShoppingCart(
+                                items,
+                                items.stream()
+                                        .map(item -> item.price().multiply(item.count()))
+                                        .reduce(new BigDecimal(0), BigDecimal::add)
+                        )
+                );
+    }
 
-        return new ShoppingCart(
-                items,
-                items.stream()
-                        .map(item -> item.price().multiply(item.count()))
-                        .reduce(new BigDecimal(0), BigDecimal::add)
+    public Mono<Long> buy() {
+        return orderService.createOrder(
+                itemService.getItemsWithNonZeroCount()
+                        .map(ItemDTO::id)
+                        .distinct()
+                        .collectList()
+                        .doOnNext(list ->
+                                {
+                                    if (list.isEmpty()) {
+                                        throw new IllegalStateException("No items in cart");
+                                    }
+                                }
+                        )
         );
     }
 
-    public long buy() {
-        var itemsToBuy = itemService.getItemsWithNonZeroCount()
-                .stream()
-                .map(ItemDTO::id)
-                .collect(Collectors.toSet());
-
-        if (itemsToBuy.isEmpty()) {
-            throw new IllegalStateException("No items in cart");
-        }
-
-        return orderService.createOrder(itemsToBuy);
-    }
-
-    public void changeCount(long itemId, ChangeCountAction action) {
-        itemService.changeCount(itemId, action);
+    public Mono<Void> changeCount(long itemId, ChangeCountAction action) {
+        Objects.requireNonNull(action);
+        return itemService.changeCount(itemId, action);
     }
 }
