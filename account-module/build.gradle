@@ -1,0 +1,24 @@
+openApiGenerate {
+    generatorName.set("spring")
+    inputSpec.set("$projectDir/src/main/resources/account-service-api.yml")
+    outputDir.set("$buildDir/generated/openapi")
+    apiPackage.set("ru.practicum.account.api")
+    modelPackage.set("ru.practicum.account.dto")
+    configOptions.set([
+            reactive: "true",
+            interfaceOnly: 'true',
+            useTags: 'true',
+            jakarta: 'true'
+    ])
+}
+
+sourceSets {
+    main.java.srcDirs += "$buildDir/generated/openapi/src/main/java"
+}
+
+compileJava.dependsOn tasks.openApiGenerate
+
+bootJar {
+    launchScript()
+    archiveFileName = "account.jar"
+}
