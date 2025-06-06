@@ -52,7 +52,17 @@
     <tr>
         <td style="text-align:right">
             <form action="/cart/buy" method="post" th:if="${!items.isEmpty()}">
-                <button>Купить</button>
+                <button th:disabled="${accountAmount < 0 || accountAmount.subtract(total).doubleValue() < 0}">
+                    Купить
+                </button>
+
+                <div th:if="${accountAmount < 0}">
+                    <p class="text-warning">Сервис платежей недоступен</p>
+                </div>
+
+                <div th:if="${accountAmount.subtract(total).doubleValue() < 0}">
+                    <p class="text-warning">Средств для оплаты не хватает</p>
+                </div>
             </form>
         </td>
     </tr>

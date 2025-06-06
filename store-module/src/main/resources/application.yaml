@@ -1,0 +1,9 @@
+account:
+  api: 'http://localhost:8081/api/v1/account'
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/test
+    username: test
+    password: test
+  application:
+    name: store
