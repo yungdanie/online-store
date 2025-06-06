@@ -1,6 +1,13 @@
 version: '3.8'
 
 services:
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis
+    command: [ "redis-server" ]
+    networks:
+      - app-net
+
   postgres:
     image: postgres:15-alpine
     environment:
@@ -12,14 +19,26 @@ services:
     networks:
       - app-net
 
-  app:
-    build: .
+  account-module:
+    build: ./account-module/
+    ports:
+      - "8081:8081"
+    networks:
+      - app-net
+
+  store-module:
+    build: ./store-module/
     depends_on:
       - postgres
+      - account-module
+      - redis
     environment:
       SPRING_R2DBC_USERNAME: "username"
       SPRING_R2DBC_PASSWORD: "password"
       SPRING_R2DBC_URL: "r2dbc:postgresql://postgres:5432/testing"
+      ACCOUNT_API: "localhost:8081/api/v1/account"
+      SPRING_DATA_REDIS_HOST: "redis"
+      SPRING_DATA_REDIS_PORT: "6379"
     ports:
       - "8080:8080"
     networks:
