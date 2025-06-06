@@ -1,0 +1,58 @@
+ext {
+    mapstructVersion = "1.6.3"
+    hibernateVersion = "6.6.13.Final"
+}
+
+dependencies {
+
+    testImplementation 'org.testcontainers:testcontainers'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation "org.springframework.boot:spring-boot-testcontainers"
+    testImplementation 'com.redis:testcontainers-redis:2.2.2'
+    testImplementation "org.testcontainers:r2dbc"
+
+    // r2dbc
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+    runtimeOnly 'org.postgresql:r2dbc-postgresql'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+
+    //frontend
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    // lombok
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+
+    // mapstruct
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+}
+
+openApiGenerate {
+    generatorName = 'java'
+    library = 'webclient'
+    inputSpec = "$rootDir/account-module/src/main/resources/account-service-api.yml"
+    outputDir = "$buildDir/generated/openapi"
+    apiPackage = 'ru.practicum.store.api'
+    modelPackage = 'ru.practicum.store.dto'
+    configOptions = [
+            reactive: "true",
+            useTags: 'true',
+            jakarta: 'true',
+            interfaceOnly: 'false'
+    ]
+}
+
+compileJava.dependsOn tasks.openApiGenerate
+
+sourceSets {
+    main.java.srcDirs += "$buildDir/generated/openapi/src/main/java"
+}
+
+bootJar {
+    launchScript()
+    mainClass = 'ru.practicum.store.StoreApplication'
+    archiveFileName = "store.jar"
+}
