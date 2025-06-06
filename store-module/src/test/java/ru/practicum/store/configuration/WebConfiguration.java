@@ -1,4 +1,4 @@
-package ru.practicum.onlinestore.configuration;
+package ru.practicum.store.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

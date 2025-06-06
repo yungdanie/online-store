@@ -1,4 +1,4 @@
-package ru.practicum.onlinestore.integration;
+package ru.practicum.store.integration;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -7,11 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.context.ImportTestcontainers;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ru.practicum.onlinestore.configuration.PostgresContainerBase;
-import ru.practicum.onlinestore.dto.request.ItemSearchRequest;
-import ru.practicum.onlinestore.model.Item;
-import ru.practicum.onlinestore.repository.ItemRepository;
-import ru.practicum.onlinestore.service.ItemService;
+import ru.practicum.store.configuration.PostgresContainerBase;
+import ru.practicum.store.configuration.RedisContainerBase;
+import ru.practicum.store.dto.request.ItemSearchRequest;
+import ru.practicum.store.model.Item;
+import ru.practicum.store.repository.ItemRepository;
+import ru.practicum.store.service.ItemService;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -19,7 +20,7 @@ import java.util.stream.IntStream;
 
 @SpringBootTest
 @Testcontainers
-@ImportTestcontainers(PostgresContainerBase.class)
+@ImportTestcontainers({PostgresContainerBase.class, RedisContainerBase.class})
 class ItemServiceIntegrationTest {
 
     @Autowired

@@ -1,4 +1,4 @@
-package ru.practicum.onlinestore.web;
+package ru.practicum.store.web;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -9,12 +9,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
-import ru.practicum.onlinestore.configuration.WebConfiguration;
-import ru.practicum.onlinestore.controller.ItemController;
-import ru.practicum.onlinestore.dto.response.ItemDTO;
-import ru.practicum.onlinestore.dto.response.ItemSearchResponse;
-import ru.practicum.onlinestore.dto.response.Paging;
-import ru.practicum.onlinestore.service.ItemService;
+import ru.practicum.store.configuration.WebConfiguration;
+import ru.practicum.store.controller.ItemController;
+import ru.practicum.store.dto.response.ItemDTO;
+import ru.practicum.store.dto.response.ItemSearchResponse;
+import ru.practicum.store.dto.response.Paging;
+import ru.practicum.store.service.ItemService;
 
 import java.math.BigDecimal;
 import java.util.List;

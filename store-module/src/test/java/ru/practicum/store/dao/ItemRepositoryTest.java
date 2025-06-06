@@ -1,4 +1,4 @@
-package ru.practicum.onlinestore.dao;
+package ru.practicum.store.dao;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -6,16 +6,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.context.ImportTestcontainers;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import ru.practicum.onlinestore.configuration.PostgresContainerBase;
-import ru.practicum.onlinestore.model.Item;
-import ru.practicum.onlinestore.repository.ItemRepository;
+import ru.practicum.store.configuration.PostgresContainerBase;
+import ru.practicum.store.model.Item;
+import ru.practicum.store.repository.ItemRepository;
 
 import java.math.BigDecimal;
 import java.util.stream.IntStream;
 
 @SpringBootTest
-@Testcontainers
 @ImportTestcontainers(PostgresContainerBase.class)
 class ItemRepositoryTest extends PostgresContainerBase {
 

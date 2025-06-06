@@ -1,4 +1,4 @@
-package ru.practicum.onlinestore.unit;
+package ru.practicum.store.unit;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -6,15 +6,17 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import reactor.core.publisher.Mono;
-import ru.practicum.onlinestore.configuration.RandomIdConfiguration;
-import ru.practicum.onlinestore.dto.request.ChangeCountAction;
-import ru.practicum.onlinestore.dto.request.ItemSearchRequest;
-import ru.practicum.onlinestore.mapper.ItemMapper;
-import ru.practicum.onlinestore.mapper.PagingMapper;
-import ru.practicum.onlinestore.repository.ItemRepository;
-import ru.practicum.onlinestore.service.ItemService;
+import ru.practicum.store.configuration.RandomIdConfiguration;
+import ru.practicum.store.dto.request.ChangeCountAction;
+import ru.practicum.store.dto.request.ItemSearchRequest;
+import ru.practicum.store.dto.response.ItemDTO;
+import ru.practicum.store.mapper.ItemMapper;
+import ru.practicum.store.mapper.PagingMapper;
+import ru.practicum.store.repository.ItemRepository;
+import ru.practicum.store.service.ItemService;
 
 import java.util.List;
 
@@ -34,6 +36,9 @@ class ItemServiceUnitTest {
 
     @MockitoBean
     private ItemMapper itemMapper;
+
+    @MockitoBean(name = "itemsTemplate")
+    private ReactiveRedisTemplate<String, List<ItemDTO>> reactiveRedisTemplate;
 
     @Autowired
     @Qualifier("id")
