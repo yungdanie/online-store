@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: payment
+initBalance: 10_000
+server:
+  port: 8081

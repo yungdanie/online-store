@@ -1,0 +1,58 @@
+openapi: 3.0.0
+info:
+  title: Account Service API
+  version: 1.0.0
+tags:
+  - name: Account
+servers:
+  - url: http://localhost:8080/api/v1/account/
+paths:
+  /pay:
+    post:
+      tags: [Account]
+      operationId: pay
+      summary: Payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Payment"
+      responses:
+        200:
+          description: Payment successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        400:
+          description: Invalid input or not enough amount to pay
+  /amount:
+    get:
+      tags: [Account]
+      operationId: getAmount
+      summary: Account
+      responses:
+        200:
+          description: Get amount of account is successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        500:
+          description: Interval server error
+components:
+  schemas:
+    Payment:
+      type: object
+      properties:
+        amount:
+          type: number
+          minimum: 0.001
+      required: [amount]
+    Account:
+      type: object
+      properties:
+        amount:
+          type: number
+      required: [ amount ]
